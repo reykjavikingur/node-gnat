@@ -4,50 +4,41 @@ var Promise = require('promise');
 var execFile = require('child_process').execFile;
 var del = require('del');
 var PackageData = require('./lib/package-data');
-var PackageFile = require('./lib/package-file');
 
 var gnat = {
-	detach: detach
+	clone: clone
 };
 
-function detach(sourcePackageName, targetPath) {
+function clone(gitUrl, targetPath) {
 
-	var packageFile, pkg, packageData;
+	if (!gitUrl) {
+		throw new Error('missing git URL');
+	}
 
-	return new Promise(function (resolve, reject) {
+	if (!targetPath) {
 
-		console.log('detaching', sourcePackageName);
+		// look for target path in command line argument
+		targetPath = process.argv[2];
 
 		if (!targetPath) {
-			targetPath = process.argv[2]; // look for target path in first command line argument to the app
-
-			if (!targetPath) {
-				throw new Error('missing target path');
-			}
-
-			if (targetPath.indexOf('/') >= 0) {
-				throw new Error('invalid target path');
-			}
+			// still not set?
+			throw new Error('missing target path');
 		}
 
-		packageFile = PackageFile(sourcePackageName);
+		if (targetPath.indexOf('/') >= 0) {
+			// descend only one directory level, please
+			throw new Error('invalid target path');
+		}
+	}
 
-		var packagePath = packageFile.resolve(require.resolve(sourcePackageName));
-
-		pkg = require(packagePath);
-
-		packageData = PackageData(pkg);
-
-		resolve();
-
-	})
+	return Promise.resolve()
 
 		.then(function () {
 			return checkTargetAvailability(targetPath);
 		})
 
 		.then(function () {
-			return gitClone(packageData, targetPath);
+			return gitClone(gitUrl, targetPath);
 		})
 
 		.then(function () {
@@ -55,8 +46,11 @@ function detach(sourcePackageName, targetPath) {
 		})
 
 		.then(function () {
+			var packagePath = process.cwd() + '/' + targetPath + '/package.json';
+			var pkg = require(packagePath);
+			var packageData = PackageData(pkg);
 			packageData.detach(targetPath);
-			writePackage(pkg, targetPath);
+			return writeJsonFile(packagePath, pkg);
 		})
 
 		;
@@ -75,9 +69,8 @@ function checkTargetAvailability(path) {
 	});
 }
 
-function gitClone(packageData, path) {
+function gitClone(url, path) {
 	return new Promise(function (resolve, reject) {
-		var url = packageData.findGitUrl();
 		console.log('git', 'clone', url, path);
 		execFile('git', ['clone', url, path], function (error, stdout, stderr) {
 			if (error) {
@@ -91,11 +84,10 @@ function gitClone(packageData, path) {
 	});
 }
 
-function writePackage(pkg, targetPath) {
+function writeJsonFile(path, data) {
 	return new Promise(function (resolve, reject) {
-		var packagePath = process.cwd() + '/' + targetPath + '/package.json';
-		var output = JSON.stringify(pkg, null, '  ');
-		fs.writeFile(packagePath, output, 'utf8', function (err) {
+		var output = JSON.stringify(data, null, '  ');
+		fs.writeFile(path, output, 'utf8', function (err) {
 			if (err) {
 				reject(err);
 			}
