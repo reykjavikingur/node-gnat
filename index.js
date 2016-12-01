@@ -16,19 +16,7 @@ function clone(gitUrl, targetPath) {
 	}
 
 	if (!targetPath) {
-
-		// look for target path in command line argument
-		targetPath = process.argv[2];
-
-		if (!targetPath) {
-			// still not set?
-			throw new Error('missing target path');
-		}
-
-		if (targetPath.indexOf('/') >= 0) {
-			// descend only one directory level, please
-			throw new Error('invalid target path');
-		}
+		throw new Error('missing target path');
 	}
 
 	return Promise.resolve()
