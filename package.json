@@ -1,0 +1,36 @@
+{
+  "name": "gnat",
+  "version": "1.0.0",
+  "description": "Clones Node starter projects from Git and initializes for subsequent modification",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reykjavikingur/node-gnat.git"
+  },
+  "keywords": [
+    "node",
+    "starter",
+    "git",
+    "clone",
+    "template",
+    "project"
+  ],
+  "author": "Andrew Strader",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/reykjavikingur/node-gnat/issues"
+  },
+  "homepage": "https://github.com/reykjavikingur/node-gnat#readme",
+  "dependencies": {
+    "del": "^2.2.2",
+    "path": "^0.12.7",
+    "promise": "^7.1.1"
+  },
+  "devDependencies": {
+    "mocha": "^3.2.0",
+    "should": "^11.1.1"
+  }
+}
