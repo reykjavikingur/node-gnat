@@ -37,6 +37,7 @@ function clone(gitUrl, targetPath) {
 			var packagePath = process.cwd() + '/' + targetPath + '/package.json';
 			var pkg = require(packagePath);
 			var packageData = PackageData(pkg);
+			// TODO prompt for everything that `npm init` prompts for
 			packageData.detach(targetPath);
 			return writeJsonFile(packagePath, pkg);
 		})
