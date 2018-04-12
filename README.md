@@ -13,18 +13,27 @@ prompting as necessary.
 
 ## Usage
 
-`gnat clone git-repo-url target-path`
+`gnat clone GIT-REPO-URL TARGET-PATH`
 
 ## Example
 
-Suppose I have a Git repository for "static-site-starter",
-which I would like to clone as a new, separate Node project.
+Suppose I have a Github repository `https://github.com/edgar/static-site-generator`,
+which I would like to clone as a new, separate Node project in the directory `my-example-site`
 
-`gnat clone https://github.com/reykjavikingur/static-site-generator.git my-example-site`
+You would run the command:
 
-The command above will create a Git clone of the repository at the given URL,
-put it into the directory `my-example-site`.
-Then it will prompt the user for Node package input, similar to `npm init`.
-It will also delete `my-example-site/.git`
-and remove the "repository" field from `package.json`
+`gnat clone edgar/static-site-generator my-example-site`
 
+Effects:
+* clone the repository into the given path
+* prompt you for `package.json` changes (similar to `npm init`)
+* remove `repository` from `package.json`
+* remove `.git` in your new path
+
+You can then change to your new directory, do your installations, and attach to a new repository.
+
+
+## TODO
+
+* after prompting for package.json fields, it should show resulting changes and prompt for confirmation (default "y")
+* have registry mapping simple names to git urls to clone and allow searching with subcommand "list"

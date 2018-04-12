@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
-var clone = require('./lib/clone');
+const pkg = require('./package.json');
+const clone = require('./lib/clone');
+const GitUrl = require('./lib/git-url');
 
 /*
  This is the file for the bin command "gnat" that is installed globally.
@@ -14,6 +16,7 @@ var clone = require('./lib/clone');
 var args = process.argv.slice(2);
 
 if (args.length === 0) {
+	plug();
 	usage();
 	process.exit(0);
 }
@@ -27,9 +30,12 @@ else {
 			usage();
 			process.exit(1);
 		}
+		url = GitUrl.create(url);
+		console.log('cloning repository:', url);
 		clone(url, path)
 			.then(function () {
-				console.log('clone action completed');
+				console.log('');
+				console.log('successfully cloned into path:', path);
 			}, function (e) {
 				console.error('clone action failed:', e.message);
 			})
@@ -40,6 +46,10 @@ else {
 		usage();
 		process.exit(1);
 	}
+}
+
+function plug() {
+	console.log('gnat: Version', pkg.version);
 }
 
 function usage() {
